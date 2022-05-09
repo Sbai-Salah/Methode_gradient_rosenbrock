@@ -1,0 +1,67 @@
+
+function result = Optim(mth)
+time = cputime; 
+
+epsilon = 10^-6 ; 
+X(1) = -1.2; 
+X(2) = 1.0; 
+
+gradient(1) = 1.0; 
+gradient(2) = 1.0; 
+
+alpha = 1.0; 
+beta = 0.9; 
+% valeur de bera dans l'inegalite d'armigo... 
+
+k = 0;
+flag = true ; 
+while flag 
+k = k +1
+y = fun(X) 
+gradient = grd(X) 
+normGradient = gradient*gradient'
+f0 = y ; 
+f1 = fun(X - alpha* gradient); 
+
+alpha = 1.0; 
+   if(f1<=f0-alpha*beta*(gradient*gradient'))
+        while(f1<=f0-alpha*beta*(gradient*gradient'))
+        alpha = alpha*2.0;
+        f1 = fun(X-alpha*gradient);
+        end
+
+% on prend donc le pas obtenu a l'etape just avant qui etait acceptable. on le divise par 2..
+
+alpha = alpha/2.0; 
+    else 
+
+% a cette etape le pas est tres grand 
+            while(f1<=f0-alpha*beta*(gradient*gradient'))
+            alpha = alpha/2.0;
+            f1 = fun(X-alpha*gradient);
+            end
+     end 
+alpha = alpha 
+
+% db n7esbo : X(k+1) = X(k) + alpha(k)d(k) = X(k)-alpha(k)*gradf(X(k))
+
+X = X - alpha*gradient;
+            if epsilon > normGradient
+            flag = false; 
+            end 
+    end 
+time = cputime - time
+end 
+
+
+% db n7eto l functions donner 
+
+function f = fun(x) 
+f = 10*(x(2)-x(1)^2)^2 + (1-x(1))^2;
+end 
+
+% le gradient de la fonction : 
+function g = grd(x) 
+g(1)= -40*x(1)*(x(2)-x(1)^2) + 2*x -2;
+g(2)= 20*(x(2)-x(1)^2);
+end 
